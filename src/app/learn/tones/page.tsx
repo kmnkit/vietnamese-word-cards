@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import tonesData from '@/data/tones.json';
 import { useAudioPlayer } from '@/lib/hooks/useAudioPlayer';
 
@@ -29,9 +30,17 @@ export default function TonesPage() {
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          ベトナム語の声調
-        </h1>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900">
+            ベトナム語の声調
+          </h1>
+          <Link
+            href="/learn/tones/quiz"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors shadow-md hover:shadow-lg"
+          >
+            🎯 クイズに挑戦
+          </Link>
+        </div>
         <p className="text-gray-600">
           6つの声調を理解することは、ベトナム語習得の重要な第一歩です。同じ音でも声調が違えば意味が変わります。
         </p>
