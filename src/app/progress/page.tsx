@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserProgressStore } from '@/stores/userProgressStore';
+import { useUserProgress } from '@/stores/userProgressStore';
 import categoriesData from '@/data/categories.json';
 
 export default function ProgressPage() {
@@ -11,15 +11,15 @@ export default function ProgressPage() {
     streak_days,
     last_study_date,
     study_sessions,
-  } = useUserProgressStore();
+  } = useUserProgress();
 
   // Calculate level progress
   const getRequiredXPForLevel = (level: number) => {
     return level * 100; // 100 XP per level
   };
 
-  const currentLevelXP = getRequiredXPForLevel(current_level);
-  const nextLevelXP = getRequiredXPForLevel(current_level + 1);
+  // const currentLevelXP = getRequiredXPForLevel(current_level); // Keeping for future use
+  // const nextLevelXP = getRequiredXPForLevel(current_level + 1); // Keeping for future use
   const levelProgress = ((experience_points % 100) / 100) * 100;
 
   // Calculate category progress

@@ -1,16 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useUserProgressStore } from '@/stores/userProgressStore';
+import { useUserProgress, useLevelProgress } from '@/stores/userProgressStore';
 
+/**
+ * Home page component displaying user progress and quick access navigation
+ */
 export default function Home() {
-  // ユーザーの学習データを取得（将来的にはZustandから）
-  const { current_level, experience_points, streak_days, learned_words } =
-    useUserProgressStore();
-
-  // レベルアップに必要な経験値
-  const xpForNextLevel = current_level * 100;
-  const xpProgress = (experience_points % 100) / xpForNextLevel * 100;
+  const { current_level, streak_days, learned_words } = useUserProgress();
+  const { xpInCurrentLevel, xpRequiredForNextLevel, progressPercentage } = useLevelProgress();
 
   // 今日の学習目標（仮）
   const dailyGoal = 10; // 10単語
@@ -56,11 +54,11 @@ export default function Home() {
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
                 className="bg-blue-600 h-2 rounded-full transition-all"
-                style={{ width: `${xpProgress}%` }}
+                style={{ width: `${progressPercentage}%` }}
               />
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              {experience_points % 100} / {xpForNextLevel} XP
+              {xpInCurrentLevel} / {xpRequiredForNextLevel} XP
             </p>
           </div>
         </div>

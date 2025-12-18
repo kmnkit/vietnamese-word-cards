@@ -4,15 +4,8 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useUserProgressStore } from '@/stores/userProgressStore';
-
-interface Word {
-  id: string;
-  vietnamese: string;
-  japanese: string;
-  pronunciation: string;
-  category: string;
-}
+import { useUserProgressActions } from '@/stores/userProgressStore';
+import type { Word } from '@/types';
 
 interface QuizQuestion {
   word: Word;
@@ -34,7 +27,7 @@ export default function JaToViQuizPage() {
   const [quizComplete, setQuizComplete] = useState(false);
 
   const { addExperiencePoints, updateStreak, addStudySession } =
-    useUserProgressStore();
+    useUserProgressActions();
 
   // Load words and generate questions
   useEffect(() => {
@@ -94,7 +87,6 @@ export default function JaToViQuizPage() {
     if (quizComplete && questions.length > 0) {
       updateStreak();
       addStudySession({
-        date: new Date().toISOString(),
         duration_minutes: Math.ceil(questions.length * 0.5), // Estimate: 30 sec per question
         words_practiced: questions.length,
         quiz_score: score,

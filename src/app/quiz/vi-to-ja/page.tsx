@@ -4,17 +4,9 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useUserProgressStore } from '@/stores/userProgressStore';
+import { useUserProgressActions } from '@/stores/userProgressStore';
 import { useAudioPlayer } from '@/lib/hooks/useAudioPlayer';
-
-interface Word {
-  id: string;
-  vietnamese: string;
-  japanese: string;
-  pronunciation: string;
-  audio_url: string;
-  category: string;
-}
+import type { Word } from '@/types';
 
 interface QuizQuestion {
   word: Word;
@@ -35,7 +27,7 @@ export default function ViToJaQuizPage() {
   const [wrongAnswers, setWrongAnswers] = useState<QuizQuestion[]>([]);
   const [quizComplete, setQuizComplete] = useState(false);
 
-  const { addExperiencePoints } = useUserProgressStore();
+  const { addExperiencePoints } = useUserProgressActions();
   const currentQuestion = questions[currentIndex];
   const { play } = useAudioPlayer(currentQuestion?.word.audio_url || '');
 

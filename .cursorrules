@@ -1,0 +1,26 @@
+# Technology Stack
+- Frontend: React 18 with TypeScript
+- State Management: Zustand
+- Styling: Tailwind CSS
+- Testing: Vitest + React Testing Library
+
+# Coding Standards
+- Use functional components with hooks
+- Prefer named exports over default exports
+- Always destructure props
+- Use absolute imports with @ alias
+
+# Component Structure
+- One component per file
+- Co-locate styles and tests
+- Use index.ts for barrel exports
+
+# Error Handling
+- Use Error Boundaries for React errors
+- Always handle async errors with try-catch
+- Log errors to monitoring service
+
+# Performance
+- Lazy load routes
+- Memoize expensive computations
+- Use React.memo for pure components

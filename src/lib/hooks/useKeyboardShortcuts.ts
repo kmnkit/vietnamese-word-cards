@@ -1,57 +1,116 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import type { AppRoute } from '@/types';
+import { KEYBOARD_SHORTCUTS, isValidRoute } from '@/types';
 
-export function useKeyboardShortcuts() {
+/**
+ * Configuration for keyboard shortcuts hook
+ */
+interface UseKeyboardShortcutsOptions {
+  /** Whether shortcuts are enabled (default: true) */
+  readonly enabled?: boolean;
+  /** Additional custom shortcuts */
+  readonly customShortcuts?: readonly {
+    readonly key: string;
+    readonly handler: () => void;
+    readonly requiresModifier: boolean;
+  }[];
+}
+
+/**
+ * Hook for handling global keyboard shortcuts
+ * @param options - Configuration options
+ */
+export function useKeyboardShortcuts(
+  options: UseKeyboardShortcutsOptions = {}
+): void {
+  const { enabled = true, customShortcuts = [] } = options;
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is typing in an input/textarea
-      const target = e.target as HTMLElement;
+  /**
+   * Check if the current target should ignore keyboard shortcuts
+   */
+  const shouldIgnoreTarget = useCallback((target: EventTarget | null): boolean => {
+    if (!(target instanceof HTMLElement)) {
+      return false;
+    }
+
+    return (
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.tagName === 'SELECT' ||
+      target.isContentEditable ||
+      target.closest('[role="dialog"]') !== null ||
+      target.closest('[role="menu"]') !== null
+    );
+  }, []);
+
+  /**
+   * Navigate to a route safely
+   */
+  const navigateTo = useCallback((route: AppRoute): void => {
+    if (isValidRoute(route)) {
+      router.push(route);
+    }
+  }, [router]);
+
+  /**
+   * Handle escape key behavior
+   */
+  const handleEscape = useCallback((): void => {
+    if (pathname !== '/') {
+      router.back();
+    }
+  }, [pathname, router]);
+
+  /**
+   * Main keyboard event handler
+   */
+  const handleKeyDown = useCallback((event: KeyboardEvent): void => {
+    if (!enabled || shouldIgnoreTarget(event.target)) {
+      return;
+    }
+
+    const { key, ctrlKey, metaKey } = event;
+    const hasModifier = ctrlKey || metaKey;
+
+    // Handle custom shortcuts first
+    for (const shortcut of customShortcuts) {
       if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable
+        shortcut.key === key &&
+        shortcut.requiresModifier === hasModifier
       ) {
+        event.preventDefault();
+        shortcut.handler();
         return;
       }
+    }
 
-      // Global shortcuts (Ctrl/Cmd + Key)
-      if (e.ctrlKey || e.metaKey) {
-        switch (e.key) {
-          case 'h':
-            e.preventDefault();
-            router.push('/');
-            break;
-          case 'f':
-            e.preventDefault();
-            router.push('/flashcards');
-            break;
-          case 'q':
-            e.preventDefault();
-            router.push('/quiz');
-            break;
-          case 'p':
-            e.preventDefault();
-            router.push('/progress');
-            break;
-          default:
-            break;
+    // Handle built-in shortcuts
+    for (const shortcut of KEYBOARD_SHORTCUTS) {
+      if (
+        shortcut.key === key &&
+        shortcut.requiresModifier === hasModifier
+      ) {
+        event.preventDefault();
+        
+        if (key === 'Escape') {
+          handleEscape();
+        } else {
+          navigateTo(shortcut.route);
         }
+        return;
       }
+    }
+  }, [enabled, shouldIgnoreTarget, customShortcuts, navigateTo, handleEscape]);
 
-      // Escape key - go back or close
-      if (e.key === 'Escape') {
-        // If not on home page, go back
-        if (pathname !== '/') {
-          e.preventDefault();
-          router.back();
-        }
-      }
-    };
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, { passive: false });
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [router, pathname]);
+  }, [enabled, handleKeyDown]);
 }

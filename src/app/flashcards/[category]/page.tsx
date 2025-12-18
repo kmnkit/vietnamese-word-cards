@@ -3,27 +3,20 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAudioPlayer } from '@/lib/hooks/useAudioPlayer';
-import { useUserProgressStore } from '@/stores/userProgressStore';
+import { useUserProgressActions } from '@/stores/userProgressStore';
+import type { Word, Category, CategoryId } from '@/types';
+import { isCategoryId } from '@/types';
 import categoriesData from '@/data/categories.json';
 
-interface Word {
-  id: string;
-  vietnamese: string;
-  japanese: string;
-  pronunciation: string;
-  audio_url: string;
-  category: string;
-  difficulty: string;
-  example_sentence?: {
-    vietnamese: string;
-    japanese: string;
-  };
-}
+type CategoryData = Category[];
 
+/**
+ * Page component for category-specific flashcard learning
+ */
 export default function FlashcardCategoryPage() {
   const router = useRouter();
   const params = useParams();
-  const categoryId = params.category as string;
+  const categoryParam = params.category;
 
   const [words, setWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -32,12 +25,23 @@ export default function FlashcardCategoryPage() {
   const [sessionSkipped, setSessionSkipped] = useState<string[]>([]);
   const [showCompletion, setShowCompletion] = useState(false);
 
+  // User progress state removed as it's not currently used
   const { addLearnedWord, addExperiencePoints, updateStreak, addStudySession } =
-    useUserProgressStore();
+    useUserProgressActions();
 
-  const category = categoriesData.find((c) => c.id === categoryId);
+  // Type-safe category parameter validation
+  const categoryId: CategoryId | null = typeof categoryParam === 'string' && isCategoryId(categoryParam) ? categoryParam : null;
+  
+  const category = categoryId ? (categoriesData as CategoryData).find((c) => c.id === categoryId) : null;
   const currentWord = words[currentIndex];
   const { play } = useAudioPlayer(currentWord?.audio_url || '');
+  
+  // Redirect if invalid category
+  useEffect(() => {
+    if (!categoryId) {
+      router.push('/flashcards');
+    }
+  }, [categoryId, router]);
 
   // Load words for this category
   useEffect(() => {
@@ -63,7 +67,6 @@ export default function FlashcardCategoryPage() {
     if (showCompletion && sessionLearned.length > 0) {
       updateStreak();
       addStudySession({
-        date: new Date().toISOString(),
         duration_minutes: Math.ceil(sessionLearned.length * 0.5), // Estimate: 30 sec per card
         words_practiced: words.length,
         activity_type: 'flashcard',
@@ -115,7 +118,8 @@ export default function FlashcardCategoryPage() {
     setShowCompletion(false);
   };
 
-  if (!category || words.length === 0) {
+  // Return early if invalid category or loading
+  if (!categoryId || !category || words.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center">

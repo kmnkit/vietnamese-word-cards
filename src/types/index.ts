@@ -1,89 +1,309 @@
-// 単語データ型
+/**
+ * Represents a Vietnamese word with its Japanese translation and learning metadata
+ */
 export interface Word {
-  id: string;
-  vietnamese: string;
-  japanese: string;
-  pronunciation: string; // カタカナ読み
-  audio_url: string;
-  category: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  example_sentence?: {
-    vietnamese: string;
-    japanese: string;
-  };
+  /** Unique identifier for the word */
+  readonly id: string;
+  /** Vietnamese word text */
+  readonly vietnamese: string;
+  /** Japanese translation */
+  readonly japanese: string;
+  /** Katakana pronunciation guide */
+  readonly pronunciation: string;
+  /** Audio file URL for pronunciation */
+  readonly audio_url: string;
+  /** Category this word belongs to */
+  readonly category: CategoryId;
+  /** Learning difficulty level */
+  readonly difficulty: DifficultyLevel;
+  /** Optional example sentence with translation */
+  readonly example_sentence?: ExampleSentence;
 }
 
-// カテゴリー型
+/**
+ * Example sentence with Vietnamese text and Japanese translation
+ */
+export interface ExampleSentence {
+  readonly vietnamese: string;
+  readonly japanese: string;
+}
+
+/**
+ * Valid difficulty levels for words
+ */
+export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
+
+/**
+ * Valid category IDs - must match data file names
+ */
+export type CategoryId = 'greetings' | 'numbers' | 'daily' | 'food' | 'business';
+
+/**
+ * Learning category for organizing words
+ */
 export interface Category {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  color: string;
-  wordCount: number;
+  /** Unique identifier matching CategoryId type */
+  readonly id: CategoryId;
+  /** Japanese display name */
+  readonly name: string;
+  /** Vietnamese display name */
+  readonly name_vietnamese: string;
+  /** Category description */
+  readonly description: string;
+  /** Emoji icon for display */
+  readonly icon: string;
+  /** Hex color code for theming */
+  readonly color: string;
+  /** Total number of words in this category */
+  readonly wordCount: number;
+  /** Learning difficulty level */
+  readonly difficulty: DifficultyLevel;
+  /** Display order in lists */
+  readonly order: number;
 }
 
-// アルファベット型
+/**
+ * Vietnamese alphabet letter with pronunciation
+ */
 export interface Alphabet {
-  letter: string;
-  pronunciation: string;
-  audio_url: string;
-  examples: string[];
+  /** The Vietnamese letter */
+  readonly letter: string;
+  /** Pronunciation guide */
+  readonly pronunciation: string;
+  /** Audio file URL for pronunciation */
+  readonly audio_url: string;
+  /** Example words using this letter */
+  readonly examples: readonly string[];
 }
 
-// 声調型
+/**
+ * Vietnamese tone with examples
+ */
 export interface Tone {
-  id: string;
-  name: string;
-  vietnamese_name: string;
-  symbol: string;
-  description: string;
-  audio_url: string;
-  pattern: string; // 高低パターン (例: "↗" "↘")
-  examples: {
-    word: string;
-    meaning: string;
-  }[];
+  /** Unique tone identifier */
+  readonly id: ToneId;
+  /** English/Japanese name */
+  readonly name: string;
+  /** Vietnamese name */
+  readonly vietnamese_name: string;
+  /** Tone mark symbol */
+  readonly symbol: string;
+  /** Description of tone usage */
+  readonly description: string;
+  /** Audio file URL for pronunciation */
+  readonly audio_url: string;
+  /** Visual pattern representation */
+  readonly pattern: string;
+  /** Example words demonstrating this tone */
+  readonly examples: readonly ToneExample[];
 }
 
-// 学習セッション型
+/**
+ * Example word for a tone
+ */
+export interface ToneExample {
+  readonly word: string;
+  readonly meaning: string;
+}
+
+/**
+ * Valid Vietnamese tone IDs
+ */
+export type ToneId = 'ngang' | 'huyền' | 'sắc' | 'hỏi' | 'ngã' | 'nặng';
+
+/**
+ * Study session record
+ */
 export interface StudySession {
-  date: string;
-  duration_minutes: number;
-  words_practiced: number;
-  quiz_score?: number;
-  activity_type?: 'flashcard' | 'quiz' | 'learning';
-  xp_earned?: number;
-  words_learned?: number;
+  /** ISO date string when session occurred */
+  readonly date: string;
+  /** Session duration in minutes */
+  readonly duration_minutes: number;
+  /** Total words practiced */
+  readonly words_practiced: number;
+  /** Quiz score percentage (0-100) if applicable */
+  readonly quiz_score?: number;
+  /** Type of learning activity */
+  readonly activity_type: ActivityType;
+  /** Experience points earned in session */
+  readonly xp_earned: number;
+  /** Number of new words learned */
+  readonly words_learned: number;
 }
 
-// ユーザー学習データ型
+/**
+ * Types of learning activities
+ */
+export type ActivityType = 'flashcard' | 'quiz' | 'learning';
+
+/**
+ * User progress and learning state
+ */
 export interface UserProgress {
-  user_id: string;
-  learned_words: string[]; // 習得済み単語のID配列
-  current_level: number;
-  experience_points: number;
-  streak_days: number;
-  last_study_date: string;
-  study_sessions: StudySession[];
+  /** Unique user identifier */
+  readonly user_id: string;
+  /** Array of learned word IDs */
+  readonly learned_words: readonly string[];
+  /** Current user level (1-based) */
+  readonly current_level: number;
+  /** Total experience points earned */
+  readonly experience_points: number;
+  /** Current consecutive study streak in days */
+  readonly streak_days: number;
+  /** Last study date in ISO format (YYYY-MM-DD) */
+  readonly last_study_date: string;
+  /** Historical study sessions */
+  readonly study_sessions: readonly StudySession[];
 }
 
-// クイズ問題型
+/**
+ * Quiz question with multiple choice answers
+ */
 export interface QuizQuestion {
-  id: string;
-  type: 'ja-to-vi' | 'vi-to-ja' | 'listening';
-  question: string;
-  options: string[];
-  correct_answer: string;
-  word_id: string;
-  audio_url?: string;
+  /** Unique question identifier */
+  readonly id: string;
+  /** Type of quiz question */
+  readonly type: QuizType;
+  /** Question text to display */
+  readonly question: string;
+  /** Available answer options */
+  readonly options: readonly [string, string, string, string]; // Exactly 4 options
+  /** The correct answer (must be one of the options) */
+  readonly correct_answer: string;
+  /** Associated word ID */
+  readonly word_id: string;
+  /** Audio URL for listening questions */
+  readonly audio_url?: string;
 }
 
-// クイズ結果型
+/**
+ * Types of quiz questions available
+ */
+export type QuizType = 'ja-to-vi' | 'vi-to-ja' | 'listening';
+
+/**
+ * Quiz completion results
+ */
 export interface QuizResult {
-  total_questions: number;
-  correct_answers: number;
-  incorrect_word_ids: string[];
-  score_percentage: number;
-  time_taken_seconds: number;
+  /** Total number of questions attempted */
+  readonly total_questions: number;
+  /** Number of correct answers */
+  readonly correct_answers: number;
+  /** Word IDs that were answered incorrectly */
+  readonly incorrect_word_ids: readonly string[];
+  /** Score as percentage (0-100) */
+  readonly score_percentage: number;
+  /** Time taken to complete in seconds */
+  readonly time_taken_seconds: number;
 }
+
+// ============================================================================
+// Utility Types
+// ============================================================================
+
+/**
+ * Base props for components that might need loading states
+ */
+export interface LoadingProps {
+  readonly isLoading?: boolean;
+  readonly error?: Error | null;
+}
+
+/**
+ * Props for components that handle audio playback
+ */
+export interface AudioProps {
+  readonly audioUrl: string;
+  readonly onPlay?: () => void;
+  readonly onError?: (error: Error) => void;
+}
+
+/**
+ * Generic API response wrapper
+ */
+export interface ApiResponse<T> {
+  readonly data: T;
+  readonly success: boolean;
+  readonly error?: string;
+}
+
+/**
+ * Represents a point in time for progress tracking
+ */
+export interface TimeStamp {
+  readonly date: string; // ISO date string
+  readonly timestamp: number; // Unix timestamp
+}
+
+// ============================================================================
+// Type Guards
+// ============================================================================
+
+/**
+ * Type guard to check if a value is a valid CategoryId
+ */
+export const isCategoryId = (value: unknown): value is CategoryId => {
+  return typeof value === 'string' && 
+    ['greetings', 'numbers', 'daily', 'food', 'business'].includes(value);
+};
+
+/**
+ * Type guard to check if a value is a valid QuizType
+ */
+export const isQuizType = (value: unknown): value is QuizType => {
+  return typeof value === 'string' && 
+    ['ja-to-vi', 'vi-to-ja', 'listening'].includes(value);
+};
+
+/**
+ * Type guard to check if a value is a valid ActivityType
+ */
+export const isActivityType = (value: unknown): value is ActivityType => {
+  return typeof value === 'string' && 
+    ['flashcard', 'quiz', 'learning'].includes(value);
+};
+
+// ============================================================================
+// Re-exports from other type modules
+// ============================================================================
+
+// Re-export Next.js specific types
+export type {
+  NextPageProps,
+  FlashcardParams,
+  QuizParams,
+  AppRoute,
+  KeyboardShortcut,
+  ErrorPageProps,
+  LayoutProps,
+  PageMetadata,
+  BasePageProps,
+  GenerateMetadata,
+} from './next';
+
+export {
+  isValidRoute,
+  KEYBOARD_SHORTCUTS,
+} from './next';
+
+// Re-export data validation types
+export type {
+  RawCategoryData,
+  RawWordData,
+  RawAlphabetData,
+  RawToneData,
+  ValidationResult,
+  ValidationError,
+} from './data';
+
+export {
+  isValidCategoryId,
+  isValidDifficultyLevel,
+  isValidToneId,
+  validateCategory,
+  validateWord,
+  validateAlphabet,
+  validateTone,
+  validateDataArray,
+  importAndValidateJSON,
+} from './data';

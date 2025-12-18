@@ -1,5 +1,47 @@
+import withPWA from 'next-pwa';
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = withPWA({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+  runtimeCaching: [
+    {
+      urlPattern: /^https?.*\.(mp3|wav|ogg)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'audio-cache',
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        },
+      },
+    },
+    {
+      urlPattern: /^https?.*\.(json)$/,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'data-cache',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 24 * 60 * 60, // 1 day
+        },
+      },
+    },
+    {
+      urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'image-cache',
+        expiration: {
+          maxEntries: 200,
+          maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+        },
+      },
+    },
+  ],
+})({
   reactStrictMode: true,
 
   // Performance optimizations
@@ -53,6 +95,6 @@ const nextConfig = {
       },
     ];
   },
-};
+});
 
 export default nextConfig;
