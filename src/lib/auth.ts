@@ -3,18 +3,32 @@ import Google from 'next-auth/providers/google';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { db } from '@/lib/db';
 
+// Check if Google OAuth credentials are available
+const hasGoogleAuth = process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET;
+
+// Configure providers based on available credentials
+const providers = hasGoogleAuth
+  ? [
+      Google({
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      }),
+    ]
+  : [];
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: DrizzleAdapter(db),
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-  ],
+  // Only use database adapter if providers are configured
+  adapter: hasGoogleAuth ? DrizzleAdapter(db) : undefined,
+  providers,
   callbacks: {
-    async session({ session, user }) {
-      if (session?.user && user) {
-        session.user.id = user.id;
+    async session({ session, user, token }) {
+      // Handle both database and JWT sessions
+      if (session?.user) {
+        if (user) {
+          session.user.id = user.id;
+        } else if (token?.sub) {
+          session.user.id = token.sub;
+        }
       }
       return session;
     },
@@ -29,7 +43,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: '/auth/signin',
     error: '/auth/error',
   },
+  // Use JWT session if no database adapter
   session: {
-    strategy: 'database',
+    strategy: hasGoogleAuth ? 'database' : 'jwt',
   },
 });
