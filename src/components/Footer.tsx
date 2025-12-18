@@ -4,7 +4,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-200 mt-auto">
+    <footer className="bg-gray-50 border-t border-gray-200 mt-auto" aria-label="フッター">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* About */}
@@ -18,7 +18,7 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <nav aria-label="フッタークイックリンク">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">
               クイックリンク
             </h3>
@@ -56,10 +56,10 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
 
           {/* Resources */}
-          <div>
+          <nav aria-label="フッターリソースリンク">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">
               リソース
             </h3>
@@ -70,6 +70,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-gray-600 hover:text-primary-600"
+                  aria-label="GitHub（新しいタブで開く）"
                 >
                   GitHub
                 </a>
@@ -83,7 +84,7 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
         </div>
 
         <div className="mt-8 pt-8 border-t border-gray-200">

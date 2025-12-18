@@ -8,12 +8,12 @@ export default function Header() {
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="メインナビゲーション">
         <div className="flex h-16 justify-between items-center">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl">🇻🇳</span>
+            <Link href="/" className="flex items-center space-x-2" aria-label="ホームページへ戻る">
+              <span className="text-2xl" aria-hidden="true">🇻🇳</span>
               <span className="text-xl font-bold text-primary-600">
                 Vietnamese Cards
               </span>
@@ -61,8 +61,10 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
               aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
+              aria-label="モバイルメニュー"
             >
-              <span className="sr-only">メニューを開く</span>
+              <span className="sr-only">{mobileMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}</span>
               {mobileMenuOpen ? (
                 <svg
                   className="h-6 w-6"
@@ -98,11 +100,12 @@ export default function Header() {
 
         {/* Mobile Navigation Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-2">
+          <div id="mobile-menu" className="md:hidden py-4 space-y-2" role="menu" aria-label="モバイルナビゲーションメニュー">
             <Link
               href="/learn/alphabet"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
+              role="menuitem"
             >
               アルファベット
             </Link>
@@ -110,6 +113,7 @@ export default function Header() {
               href="/learn/tones"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
+              role="menuitem"
             >
               声調
             </Link>
@@ -117,6 +121,7 @@ export default function Header() {
               href="/flashcards"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
+              role="menuitem"
             >
               単語カード
             </Link>
@@ -124,6 +129,7 @@ export default function Header() {
               href="/quiz"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
+              role="menuitem"
             >
               クイズ
             </Link>
@@ -131,6 +137,7 @@ export default function Header() {
               href="/progress"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
+              role="menuitem"
             >
               学習統計
             </Link>
