@@ -31,3 +31,32 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Focus indicators for keyboard navigation */
+@layer base {
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white;
+  }
+
+  /* Better contrast for disabled states */
+  button:disabled,
+  a:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  /* Improve text contrast on colored backgrounds */
+  .bg-primary-500,
+  .bg-primary-600 {
+    @apply text-white;
+  }
+
+  .bg-gray-100,
+  .bg-gray-200 {
+    @apply text-gray-900;
+  }
+}
