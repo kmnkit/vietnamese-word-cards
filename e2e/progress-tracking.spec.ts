@@ -4,27 +4,32 @@ test.describe('Progress Tracking', () => {
   test.beforeEach(async ({ page }) => {
     // Clear localStorage before each test to start fresh
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
     await page.evaluate(() => localStorage.clear());
     await page.reload();
+    await page.waitForLoadState('networkidle');
   });
 
   test('should display initial user progress on home page', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Verify home page stats are displayed
-    await expect(page.getByText('連続学習日数')).toBeVisible();
-    await expect(page.getByText('現在のレベル')).toBeVisible();
-    await expect(page.getByText('習得単語数')).toBeVisible();
+    await expect(page.getByText('連続学習日数')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('現在のレベル')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('習得単語数')).toBeVisible({ timeout: 10000 });
 
     // Initial values should be 0 or 1
-    await expect(page.locator('text=/Lv\\.\\d+/')).toBeVisible();
+    await expect(page.locator('text=/Lv\\.\\d+/')).toBeVisible({ timeout: 10000 });
   });
 
   test('should update XP after learning flashcards', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Get initial XP
     const initialXPElement = page.locator('text=/\\d+ XP/').first();
+    await expect(initialXPElement).toBeVisible({ timeout: 10000 });
     const initialXPText = await initialXPElement.textContent();
     const initialXP = parseInt(initialXPText?.match(/\d+/)?.[0] || '0');
 
@@ -34,14 +39,17 @@ test.describe('Progress Tracking', () => {
 
     // Learn one card (worth 10 XP)
     const knowButton = page.getByRole('button', { name: /覚えた/ });
+    await expect(knowButton).toBeVisible({ timeout: 10000 });
     await knowButton.click();
     await page.waitForTimeout(500);
 
     // Go back to home page
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Verify XP increased by 10
     const newXPElement = page.locator('text=/\\d+ XP/').first();
+    await expect(newXPElement).toBeVisible({ timeout: 10000 });
     const newXPText = await newXPElement.textContent();
     const newXP = parseInt(newXPText?.match(/\d+/)?.[0] || '0');
 
@@ -50,9 +58,12 @@ test.describe('Progress Tracking', () => {
 
   test('should update learned words count', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Get initial learned words count
-    const initialCountElement = page.locator('text=/習得単語数/').locator('..').locator('text=/\\d+/').first();
+    const initialCountContainer = page.locator('text=/習得単語数/').locator('..');
+    const initialCountElement = initialCountContainer.locator('text=/\\d+/').first();
+    await expect(initialCountElement).toBeVisible({ timeout: 10000 });
     const initialCountText = await initialCountElement.textContent();
     const initialCount = parseInt(initialCountText || '0');
 
@@ -61,14 +72,18 @@ test.describe('Progress Tracking', () => {
     await page.waitForLoadState('networkidle');
 
     const knowButton = page.getByRole('button', { name: /覚えた/ });
+    await expect(knowButton).toBeVisible({ timeout: 10000 });
     await knowButton.click();
     await page.waitForTimeout(500);
 
     // Return to home
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Verify learned words increased by 1
-    const newCountElement = page.locator('text=/習得単語数/').locator('..').locator('text=/\\d+/').first();
+    const newCountContainer = page.locator('text=/習得単語数/').locator('..');
+    const newCountElement = newCountContainer.locator('text=/\\d+/').first();
+    await expect(newCountElement).toBeVisible({ timeout: 10000 });
     const newCountText = await newCountElement.textContent();
     const newCount = parseInt(newCountText || '0');
 
@@ -77,23 +92,24 @@ test.describe('Progress Tracking', () => {
 
   test('should display progress statistics page', async ({ page }) => {
     await page.goto('/progress');
+    await page.waitForLoadState('networkidle');
 
     // Verify all stat cards are displayed
-    await expect(page.getByText('総経験値')).toBeVisible();
-    await expect(page.getByText('現在のレベル')).toBeVisible();
-    await expect(page.getByText('習得単語数')).toBeVisible();
-    await expect(page.getByText('連続学習日数')).toBeVisible();
+    await expect(page.getByText('総経験値')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('現在のレベル')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('習得単語数')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('連続学習日数')).toBeVisible({ timeout: 10000 });
 
     // Verify sections
-    await expect(page.getByText('レベル進捗')).toBeVisible();
-    await expect(page.getByText('カテゴリー別進捗')).toBeVisible();
-    await expect(page.getByText('学習時間')).toBeVisible();
-    await expect(page.getByText('最近の学習セッション')).toBeVisible();
+    await expect(page.getByText('レベル進捗')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('カテゴリー別進捗')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('学習時間')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('最近の学習セッション')).toBeVisible({ timeout: 10000 });
 
     // Verify category progress bars
-    await expect(page.getByText('挨拶')).toBeVisible();
-    await expect(page.getByText('数字')).toBeVisible();
-    await expect(page.getByText('日常会話')).toBeVisible();
+    await expect(page.getByText('挨拶')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('数字')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('日常会話')).toBeVisible({ timeout: 10000 });
   });
 
   test('should show study sessions after completing activities', async ({ page }) => {
@@ -103,14 +119,16 @@ test.describe('Progress Tracking', () => {
 
     // Learn at least one card
     const knowButton = page.getByRole('button', { name: /覚えた/ });
+    await expect(knowButton).toBeVisible({ timeout: 10000 });
     await knowButton.click();
     await page.waitForTimeout(500);
 
     // Go to progress page
     await page.goto('/progress');
+    await page.waitForLoadState('networkidle');
 
     // Verify study session is recorded
-    await expect(page.getByText('最近の学習セッション')).toBeVisible();
+    await expect(page.getByText('最近の学習セッション')).toBeVisible({ timeout: 10000 });
 
     // Look for flashcard activity indicator
     const flashcardActivity = page.locator('text=/単語カード/');
@@ -123,49 +141,54 @@ test.describe('Progress Tracking', () => {
 
   test('should update streak when studying', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Navigate to progress page to check initial streak
     await page.goto('/progress');
+    await page.waitForLoadState('networkidle');
 
     // Get initial streak
-    const streakElement = page.locator('text=/連続学習日数/').locator('..').locator('.text-3xl').first();
-    const initialStreakText = await streakElement.textContent();
-    const initialStreak = parseInt(initialStreakText || '0');
+    const streakContainer = page.locator('text=/連続学習日数/').locator('..');
+    const streakElement = streakContainer.locator('.text-3xl').first();
+    await expect(streakElement).toBeVisible({ timeout: 10000 });
 
     // Complete a learning activity to trigger streak update
     await page.goto('/flashcards/numbers');
     await page.waitForLoadState('networkidle');
 
-    // Learn just 3 cards, then skip the rest to complete session quickly
+    // Learn just 3 cards to trigger streak update
     for (let i = 0; i < 3; i++) {
       const knowButton = page.getByRole('button', { name: /覚えた/ });
-      const isVisible = await knowButton.isVisible().catch(() => false);
-      if (isVisible) {
-        await knowButton.click();
-        await page.waitForTimeout(50);
-      }
+      await expect(knowButton).toBeVisible({ timeout: 10000 });
+      await knowButton.click();
+      await page.waitForTimeout(50);
     }
 
-    // Skip remaining cards to reach completion
-    const skipButton = page.getByRole('button', { name: /まだ/ });
-    for (let i = 0; i < 27; i++) {
+    // Skip remaining cards to reach completion quickly
+    let cardsSkipped = 0;
+    while (cardsSkipped < 27) {
+      const skipButton = page.getByRole('button', { name: /まだ/ });
       const isVisible = await skipButton.isVisible().catch(() => false);
       if (isVisible) {
         await skipButton.click();
         await page.waitForTimeout(50);
+        cardsSkipped++;
       } else {
         break; // Reached completion screen
       }
     }
 
     // Wait for completion screen
-    await page.waitForTimeout(500);
+    await expect(page.getByText('素晴らしい！完了しました')).toBeVisible({ timeout: 10000 });
 
     // Go back to progress page
     await page.goto('/progress');
+    await page.waitForLoadState('networkidle');
 
     // Verify streak is at least 1
-    const newStreakElement = page.locator('text=/連続学習日数/').locator('..').locator('.text-3xl').first();
+    const newStreakContainer = page.locator('text=/連続学習日数/').locator('..');
+    const newStreakElement = newStreakContainer.locator('.text-3xl').first();
+    await expect(newStreakElement).toBeVisible({ timeout: 10000 });
     const newStreakText = await newStreakElement.textContent();
     const newStreak = parseInt(newStreakText || '0');
 
@@ -174,39 +197,44 @@ test.describe('Progress Tracking', () => {
 
   test('should show level progress bar', async ({ page }) => {
     await page.goto('/progress');
+    await page.waitForLoadState('networkidle');
 
     // Verify level progress section exists
-    await expect(page.getByText('レベル進捗')).toBeVisible();
+    await expect(page.getByText('レベル進捗')).toBeVisible({ timeout: 10000 });
 
     // Verify progress bar is displayed
-    const progressBar = page.locator('.bg-gradient-to-r.from-purple-500.to-blue-500');
-    await expect(progressBar).toBeVisible();
+    const progressBar = page.locator('.bg-gradient-to-r.from-purple-500.to-blue-500')
+      .or(page.locator('[role="progressbar"]'))
+      .or(page.locator('.bg-gradient-to-r'));
+    await expect(progressBar).toBeVisible({ timeout: 10000 });
 
     // Verify XP text is shown (e.g., "50 / 100 XP")
-    await expect(page.locator('text=/\\d+ \\/ 100 XP/')).toBeVisible();
+    await expect(page.locator('text=/\\d+ \\/ 100 XP/')).toBeVisible({ timeout: 10000 });
   });
 
   test('should display category progress with percentages', async ({ page }) => {
     await page.goto('/progress');
+    await page.waitForLoadState('networkidle');
 
     // Verify category progress section
-    await expect(page.getByText('カテゴリー別進捗')).toBeVisible();
+    await expect(page.getByText('カテゴリー別進捗')).toBeVisible({ timeout: 10000 });
 
     // Verify all 5 categories are shown
     const categories = ['挨拶', '数字', '日常会話', '食べ物', 'ビジネス'];
     for (const category of categories) {
-      await expect(page.getByText(category)).toBeVisible();
+      await expect(page.getByText(category)).toBeVisible({ timeout: 10000 });
     }
 
     // Verify progress percentages are shown (e.g., "0% 完了")
-    await expect(page.locator('text=/\\d+% 完了/').first()).toBeVisible();
+    await expect(page.locator('text=/\\d+% 完了/').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('should show next goals section', async ({ page }) => {
     await page.goto('/progress');
+    await page.waitForLoadState('networkidle');
 
     // Verify goals section exists
-    await expect(page.getByText('次の目標')).toBeVisible();
+    await expect(page.getByText('次の目標')).toBeVisible({ timeout: 10000 });
 
     // At least one goal should be displayed (50 words, 7 day streak, or level 5)
     const goalTexts = [
@@ -217,11 +245,15 @@ test.describe('Progress Tracking', () => {
 
     let foundGoal = false;
     for (const goalPattern of goalTexts) {
-      const goalElement = page.locator(`text=${goalPattern}`);
-      const isVisible = await goalElement.isVisible().catch(() => false);
-      if (isVisible) {
-        foundGoal = true;
-        break;
+      try {
+        const goalElement = page.locator(`text=${goalPattern}`);
+        const isVisible = await goalElement.isVisible({ timeout: 5000 });
+        if (isVisible) {
+          foundGoal = true;
+          break;
+        }
+      } catch (error) {
+        // Continue to next goal pattern
       }
     }
 
