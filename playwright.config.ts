@@ -34,10 +34,18 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
     /* Maximum time each action such as `click()` can take */
-    actionTimeout: 30 * 1000, // 30 seconds
+    actionTimeout: 15 * 1000, // 15 seconds
     /* Maximum time for navigation */
-    navigationTimeout: 60 * 1000, // 60 seconds
+    navigationTimeout: 30 * 1000, // 30 seconds
+    /* Emulate network conditions */
+    ...(process.env.CI && {
+      // CI: Faster network to speed up tests
+      launchOptions: {
+        args: ['--disable-dev-shm-usage'],
+      },
+    }),
   },
 
   /* Configure projects for major browsers */
@@ -78,10 +86,19 @@ export default defineConfig({
       ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  webServer: process.env.CI
+    ? {
+        // CI: Use production build for faster startup
+        command: 'npm run start',
+        url: 'http://localhost:3000',
+        reuseExistingServer: false,
+        timeout: 60 * 1000, // 1 minute
+      }
+    : {
+        // Local: Use dev server
+        command: 'npm run dev',
+        url: 'http://localhost:3000',
+        reuseExistingServer: true,
+        timeout: 120 * 1000, // 2 minutes
+      },
 });
