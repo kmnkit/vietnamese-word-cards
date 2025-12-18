@@ -4,25 +4,27 @@ test.describe('Flashcard Learning Flow', () => {
   test('should navigate to flashcard category and complete a learning session', async ({ page }) => {
     // Navigate to home page
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
-    // Verify home page loaded
-    await expect(page.getByText('ベトナム語学習アプリ')).toBeVisible();
+    // Verify home page loaded with correct content
+    await expect(page.getByText('ようこそ！Việt Pocket へ')).toBeVisible();
 
     // Click on flashcards link
-    await page.getByRole('link', { name: /単語カード/ }).click();
+    await page.getByRole('link', { name: '単語カード' }).first().click();
+    await page.waitForLoadState('networkidle');
 
     // Verify flashcard category page loaded
     await expect(page.getByText('カテゴリーを選択')).toBeVisible();
 
-    // Click on a category (e.g., Greetings)
-    const categoryCard = page.locator('text=挨拶').first();
-    await categoryCard.click();
+    // Click on greetings category (using button/link element)
+    const greetingsCategory = page.getByRole('button', { name: /挨拶/ }).or(page.getByRole('link', { name: /挨拶/ }));
+    await expect(greetingsCategory).toBeVisible({ timeout: 10000 });
+    await greetingsCategory.click();
+    await page.waitForLoadState('networkidle');
 
-    // Wait for flashcard page to load
-    await page.waitForURL(/\/flashcards\/greetings/);
-
-    // Verify flashcard is displayed
-    await expect(page.locator('text=ベトナム語')).toBeVisible();
+    // Verify flashcard page loaded
+    await expect(page).toHaveURL(/\/flashcards\/greetings/);
+    await expect(page.locator('text=ベトナム語')).toBeVisible({ timeout: 10000 });
 
     // Click the card to flip it
     const flashcard = page.locator('.cursor-pointer').first();
@@ -46,47 +48,47 @@ test.describe('Flashcard Learning Flow', () => {
 
   test('should play audio when audio button is clicked', async ({ page }) => {
     await page.goto('/flashcards/greetings');
-
-    // Wait for page to load
     await page.waitForLoadState('networkidle');
 
     // Find and click audio button
     const audioButton = page.getByRole('button', { name: /音声を聞く/ });
-    await expect(audioButton).toBeVisible();
+    await expect(audioButton).toBeVisible({ timeout: 10000 });
 
     // Click audio button (note: audio playback itself can't be verified in E2E)
     await audioButton.click();
+    await page.waitForTimeout(100);
 
-    // Verify no errors occurred
+    // Verify no errors occurred and button is still functional
     await expect(audioButton).toBeVisible();
   });
 
   test('should show completion screen after learning all cards', async ({ page }) => {
     // Use numbers category (30 cards) but only test a few to verify the flow
     await page.goto('/flashcards/numbers');
-
-    // Wait for flashcards to load
     await page.waitForLoadState('networkidle');
 
-    // Learn just 3 cards to test the flow (faster than all 30)
+    // Verify flashcard page loaded properly
+    await expect(page.locator('text=ベトナム語')).toBeVisible({ timeout: 10000 });
+
+    // Learn 3 cards to test the flow (faster than all 30)
     const cardsToLearn = 3;
     for (let i = 0; i < cardsToLearn; i++) {
-      // Click "覚えた" button
       const knowButton = page.getByRole('button', { name: /覚えた/ });
-      if (await knowButton.isVisible()) {
-        await knowButton.click();
-        // Reduced wait time
-        await page.waitForTimeout(100);
-      }
+      await expect(knowButton).toBeVisible({ timeout: 5000 });
+      await knowButton.click();
+      await page.waitForTimeout(50);
     }
 
     // Skip remaining cards quickly to reach completion
-    const skipButton = page.getByRole('button', { name: /まだ/ });
-    // Skip up to 27 more cards (30 total - 3 learned)
-    for (let i = 0; i < 27; i++) {
-      if (await skipButton.isVisible()) {
+    let cardsSkipped = 0;
+    while (cardsSkipped < 27) {
+      const skipButton = page.getByRole('button', { name: /まだ/ });
+      const isVisible = await skipButton.isVisible().catch(() => false);
+      
+      if (isVisible) {
         await skipButton.click();
-        await page.waitForTimeout(50); // Minimal wait
+        await page.waitForTimeout(50);
+        cardsSkipped++;
       } else {
         break; // Reached completion screen
       }
@@ -104,18 +106,27 @@ test.describe('Flashcard Learning Flow', () => {
 
   test('should allow skipping cards with "まだ" button', async ({ page }) => {
     await page.goto('/flashcards/greetings');
-
     await page.waitForLoadState('networkidle');
+
+    // Verify flashcard page loaded
+    await expect(page.locator('text=ベトナム語')).toBeVisible({ timeout: 10000 });
+
+    // Get initial progress text
+    const progressElement = page.locator('text=/\d+ \/ \d+/').first();
+    await expect(progressElement).toBeVisible();
+    const initialProgress = await progressElement.textContent();
 
     // Click "まだ" button to skip
     const skipButton = page.getByRole('button', { name: /まだ/ });
     await expect(skipButton).toBeVisible();
     await skipButton.click();
+    await page.waitForTimeout(100);
 
-    // Verify we moved to next card (progress should update)
-    await page.waitForTimeout(300);
+    // Verify progress updated (card counter should change)
+    const updatedProgress = await progressElement.textContent();
+    expect(updatedProgress).not.toBe(initialProgress);
 
-    // Verify card is still visible (not on completion screen)
+    // Verify we're still in learning mode (not on completion screen)
     await expect(page.locator('text=ベトナム語')).toBeVisible();
   });
 });
