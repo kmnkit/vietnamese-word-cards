@@ -211,16 +211,18 @@ export default function JaToViQuizPage() {
           )}
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4" role="group" aria-label="完了後のアクション">
             <button
               onClick={handleRestart}
               className="flex-1 px-6 py-3 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors"
+              aria-label="このクイズをもう一度最初から挑戦する"
             >
               もう一度挑戦
             </button>
             <button
               onClick={() => router.push('/quiz')}
               className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+              aria-label="クイズ選択画面に戻る"
             >
               他のクイズへ
             </button>
@@ -236,25 +238,26 @@ export default function JaToViQuizPage() {
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900">
-            🇯🇵➡️🇻🇳 日本語 → ベトナム語
+            <span aria-hidden="true">🇯🇵➡️🇻🇳</span> 日本語 → ベトナム語
           </h1>
           <button
             onClick={() => router.push('/quiz')}
             className="text-gray-500 hover:text-gray-700"
+            aria-label="クイズを終了してクイズ選択画面に戻る"
           >
-            ✕ 終了
+            <span aria-hidden="true">✕</span> 終了
           </button>
         </div>
 
         {/* Progress */}
-        <div className="mb-2">
-          <div className="flex justify-between text-sm text-gray-600 mb-1">
+        <div className="mb-2" role="region" aria-label="クイズ進捗">
+          <div className="flex justify-between text-sm text-gray-600 mb-1" aria-live="polite">
             <span>
               問題 {currentIndex + 1} / {questions.length}
             </span>
             <span>正解: {score}</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-200 rounded-full h-2" role="progressbar" aria-valuenow={((currentIndex + 1) / questions.length) * 100} aria-valuemin={0} aria-valuemax={100} aria-label="クイズ進捗バー">
             <div
               className="bg-primary-500 h-2 rounded-full transition-all"
               style={{
@@ -270,13 +273,13 @@ export default function JaToViQuizPage() {
         {/* Question */}
         <div className="text-center mb-8">
           <p className="text-sm text-gray-600 mb-2">日本語を読んで、対応するベトナム語を選んでください</p>
-          <h2 className="text-4xl font-bold text-gray-900">
+          <h2 className="text-4xl font-bold text-gray-900" id="quiz-question">
             {currentQuestion.word.japanese}
           </h2>
         </div>
 
         {/* Choices */}
-        <div className="grid grid-cols-1 gap-3 mb-6">
+        <div className="grid grid-cols-1 gap-3 mb-6" role="radiogroup" aria-labelledby="quiz-question">
           {currentQuestion.choices.map((choice, idx) => {
             const isSelected = selectedAnswer === choice;
             const isCorrect = choice === currentQuestion.correctAnswer;
@@ -288,6 +291,9 @@ export default function JaToViQuizPage() {
                 key={idx}
                 onClick={() => handleAnswer(choice)}
                 disabled={showFeedback}
+                role="radio"
+                aria-checked={isSelected}
+                aria-label={choice}
                 className={`p-4 rounded-lg border-2 text-left text-lg font-medium transition-all ${
                   showCorrect
                     ? 'bg-green-100 border-green-500 ring-2 ring-green-300'
@@ -300,8 +306,8 @@ export default function JaToViQuizPage() {
               >
                 <div className="flex items-center justify-between">
                   <span>{choice}</span>
-                  {showCorrect && <span className="text-2xl">✓</span>}
-                  {showIncorrect && <span className="text-2xl">✗</span>}
+                  {showCorrect && <span className="text-2xl" aria-label="正解">✓</span>}
+                  {showIncorrect && <span className="text-2xl" aria-label="不正解">✗</span>}
                 </div>
               </button>
             );
@@ -310,7 +316,7 @@ export default function JaToViQuizPage() {
 
         {/* Feedback */}
         {showFeedback && (
-          <div className="mt-6 pt-6 border-t border-gray-200">
+          <div className="mt-6 pt-6 border-t border-gray-200" role="alert" aria-live="assertive">
             <div
               className={`p-4 rounded-lg mb-4 ${
                 selectedAnswer === currentQuestion.correctAnswer
@@ -325,9 +331,11 @@ export default function JaToViQuizPage() {
                     : 'text-red-700'
                 }`}
               >
+                <span aria-hidden="true">{selectedAnswer === currentQuestion.correctAnswer ? '🎉' : '❌'}</span>
+                {' '}
                 {selectedAnswer === currentQuestion.correctAnswer
-                  ? '🎉 正解！+5 XP'
-                  : '❌ 不正解'}
+                  ? '正解！+5 XP'
+                  : '不正解'}
               </p>
               <p className="text-gray-700">
                 <strong>正解:</strong> {currentQuestion.correctAnswer}
@@ -340,6 +348,7 @@ export default function JaToViQuizPage() {
             <button
               onClick={handleNext}
               className="w-full px-6 py-3 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors"
+              aria-label={currentIndex + 1 >= questions.length ? '結果画面へ進む' : '次の問題へ進む'}
             >
               次の問題へ →
             </button>

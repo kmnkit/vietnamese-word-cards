@@ -149,22 +149,25 @@ export default function FlashcardCategoryPage() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center" role="group" aria-label="完了後のアクション">
             <button
               onClick={handleRestart}
               className="px-6 py-3 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors"
+              aria-label="このカテゴリーをもう一度最初から復習する"
             >
               もう一度復習
             </button>
             <button
               onClick={() => router.push('/flashcards')}
               className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+              aria-label="カテゴリー選択画面に移動"
             >
               他のカテゴリーへ
             </button>
             <button
               onClick={() => router.push('/')}
               className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              aria-label="ホーム画面に戻る"
             >
               ホームに戻る
             </button>
@@ -183,12 +186,13 @@ export default function FlashcardCategoryPage() {
             <button
               onClick={() => router.push('/flashcards')}
               className="text-gray-500 hover:text-gray-700"
+              aria-label="カテゴリー一覧に戻る"
             >
               ← 戻る
             </button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                {category.icon} {category.name}
+                <span aria-hidden="true">{category.icon}</span> {category.name}
               </h1>
               <p className="text-sm text-gray-600">
                 {category.name_vietnamese}
@@ -198,20 +202,21 @@ export default function FlashcardCategoryPage() {
           <button
             onClick={() => router.push('/flashcards')}
             className="text-gray-500 hover:text-gray-700"
+            aria-label="学習を終了してカテゴリー一覧に戻る"
           >
-            ✕
+            <span aria-hidden="true">✕</span>
           </button>
         </div>
 
         {/* Progress */}
-        <div className="mb-2">
-          <div className="flex justify-between text-sm text-gray-600 mb-1">
+        <div className="mb-2" role="region" aria-label="学習進捗">
+          <div className="flex justify-between text-sm text-gray-600 mb-1" aria-live="polite">
             <span>
               {currentIndex + 1} / {words.length}
             </span>
             <span>覚えた: {sessionLearned.length}</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-200 rounded-full h-2" role="progressbar" aria-valuenow={((currentIndex + 1) / words.length) * 100} aria-valuemin={0} aria-valuemax={100} aria-label="学習進捗バー">
             <div
               className="bg-primary-500 h-2 rounded-full transition-all"
               style={{
@@ -235,6 +240,16 @@ export default function FlashcardCategoryPage() {
               transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
             }}
             onClick={handleFlip}
+            role="button"
+            tabIndex={0}
+            aria-label={isFlipped ? `${currentWord?.japanese}、発音: ${currentWord?.pronunciation}` : `ベトナム語: ${currentWord?.vietnamese}`}
+            aria-pressed={isFlipped}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleFlip();
+              }
+            }}
           >
             {/* Front Side */}
             <div
@@ -293,23 +308,26 @@ export default function FlashcardCategoryPage() {
               play();
             }}
             className="px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
+            aria-label={`${currentWord?.vietnamese}の音声を再生`}
           >
-            🔊 音声を聞く
+            <span aria-hidden="true">🔊</span> 音声を聞く
           </button>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
+      <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto" role="group" aria-label="単語の習得状態を選択">
         <button
           onClick={handleDontKnow}
           className="px-8 py-4 bg-gray-200 text-gray-700 rounded-lg font-semibold text-lg hover:bg-gray-300 transition-colors"
+          aria-label="まだ覚えていない（次の単語へ）"
         >
           ← まだ
         </button>
         <button
           onClick={handleKnow}
           className="px-8 py-4 bg-green-500 text-white rounded-lg font-semibold text-lg hover:bg-green-600 transition-colors"
+          aria-label="覚えた（10 XP獲得して次の単語へ）"
         >
           覚えた →
         </button>

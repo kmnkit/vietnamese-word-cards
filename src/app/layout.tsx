@@ -4,6 +4,8 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WebVitals from '@/components/WebVitals';
+import SkipLink from '@/components/SkipLink';
+import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 
 // const inter = Inter({ subsets: ['latin'] });
 
@@ -71,8 +73,12 @@ export default function RootLayout({
     <html lang="ja">
       <body className="flex flex-col min-h-screen font-sans">
         <WebVitals />
+        <KeyboardShortcuts />
+        <SkipLink />
         <Header />
-        <main className="flex-grow">{children}</main>
+        <main id="main-content" className="flex-grow" tabIndex={-1}>
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
