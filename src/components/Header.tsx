@@ -29,6 +29,12 @@ export default function Header() {
               アルファベット
             </Link>
             <Link
+              href="/learn/tones"
+              className="text-gray-700 hover:text-primary-600 transition-colors"
+            >
+              声調
+            </Link>
+            <Link
               href="/flashcards"
               className="text-gray-700 hover:text-primary-600 transition-colors"
             >
@@ -99,6 +105,13 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               アルファベット
+            </Link>
+            <Link
+              href="/learn/tones"
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-600"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              声調
             </Link>
             <Link
               href="/flashcards"
