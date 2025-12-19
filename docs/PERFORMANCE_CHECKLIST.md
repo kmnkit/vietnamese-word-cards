@@ -135,16 +135,23 @@
 
 ### 優先度: 高
 
-- [ ] **動的インポート (Code Splitting)**
-  - 重いコンポーネントの遅延読み込み
-  - ルート別のバンドル分割
-  - 推定効果: Initial Bundle 30%削減
+- [x] **動的インポート (Code Splitting)**
+  - ✅ ToneDetailCard コンポーネントの遅延読み込み実装
+    - /learn/tones: 110 kB → 99.8 kB (-10.2 kB, 9.3%削減)
+  - ✅ QuizResults コンポーネントの遅延読み込み実装
+    - 3つのクイズページで重複コード削減
+  - ✅ `ssr: false` で Audio API などクライアント専用コンポーネントを最適化
+  - 実績: Initial Bundle 約10%削減
 
-- [ ] **React コンポーネント最適化**
-  - React.memo でメモ化
-  - useMemo/useCallback の適切な使用
-  - 不要な再レンダリング防止
-  - 推定効果: Rendering 20%高速化
+- [x] **React コンポーネント最適化**
+  - ✅ useMemo でメモ化 (progress page)
+    - categoryProgress: learned_words 依存
+    - levelProgress: experience_points 依存
+    - totalStudyMinutes: study_sessions 依存
+    - recentSessions: study_sessions 依存
+    - isStreakActive: last_study_date 依存
+  - ✅ 不要な再レンダリング防止
+  - 実績: ランタイムパフォーマンス向上、不要な再計算を防止
 
 - [ ] **データ読み込み最適化**
   - 段階的読み込み (Pagination)
@@ -255,6 +262,8 @@ npm run lighthouse
 - Web Vitals 追跡と監視
 - PWA 対応 (Service Worker、オフラインキャッシング)
 - Lighthouse ツール
+- **Code Splitting (動的インポート)** - ToneDetailCard, QuizResults
+- **React パフォーマンス最適化** - progress page に useMemo 適用
 
 **一部実装/要対応 (⚠️):**
 - CSS 最適化 (コメントアウト中 - critters必要)
@@ -262,9 +271,9 @@ npm run lighthouse
 - 音声ファイル最適化 (ファイル未統合)
 
 **未実装 (❌):**
-- 動的インポート (Code Splitting)
-- React コンポーネント最適化 (memo, useMemo, useCallback)
 - データ読み込み最適化 (プリフェッチ、ページネーション)
+- React.memo 適用 (リストアイテムコンポーネント等)
+- useCallback 適用 (イベントハンドラー等)
 - Web Workers
 - IndexedDB 最適化 (実アプリでの活用)
 
