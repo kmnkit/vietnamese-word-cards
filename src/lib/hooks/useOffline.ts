@@ -63,6 +63,24 @@ export const useOffline = (): UseOfflineReturn => {
     }
   }, []);
 
+  // Sync data when coming back online
+  const syncWhenOnline = useCallback(async (): Promise<void> => {
+    if (!navigator.onLine) {
+      console.log('Cannot sync while offline');
+      return;
+    }
+
+    try {
+      // TODO: Implement server sync functionality
+      // For now, just update the last sync timestamp
+      localStorage.setItem('lastSync', new Date().toISOString());
+      
+      console.log('Data sync placeholder executed successfully');
+    } catch (error) {
+      console.error('Failed to sync data:', error);
+    }
+  }, []);
+
   // Listen for online/offline events
   useEffect(() => {
     updateNetworkInfo();
@@ -101,7 +119,7 @@ export const useOffline = (): UseOfflineReturn => {
         connection.removeEventListener('change', handleConnectionChange);
       }
     };
-  }, [updateNetworkInfo]);
+  }, [updateNetworkInfo, syncWhenOnline]);
 
   // Preload critical assets for offline use
   const preloadCriticalAssets = useCallback(async (): Promise<void> => {
@@ -135,23 +153,6 @@ export const useOffline = (): UseOfflineReturn => {
     }
   }, []);
 
-  // Sync data when coming back online
-  const syncWhenOnline = useCallback(async (): Promise<void> => {
-    if (!isOnline) {
-      console.log('Cannot sync while offline');
-      return;
-    }
-
-    try {
-      // TODO: Implement server sync functionality
-      // For now, just update the last sync timestamp
-      localStorage.setItem('lastSync', new Date().toISOString());
-      
-      console.log('Data sync placeholder executed successfully');
-    } catch (error) {
-      console.error('Failed to sync data:', error);
-    }
-  }, [isOnline]);
 
   // Clear offline cache
   const clearOfflineCache = useCallback(async (): Promise<void> => {

@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import WebVitals from '@/components/WebVitals';
 import SkipLink from '@/components/SkipLink';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
+import { OfflineProvider } from '@/components/OfflineProvider';
 
 // const inter = Inter({ subsets: ['latin'] });
 
@@ -72,14 +73,16 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className="flex flex-col min-h-screen font-sans">
-        <WebVitals />
-        <KeyboardShortcuts />
-        <SkipLink />
-        <Header />
-        <main id="main-content" className="flex-grow" tabIndex={-1}>
-          {children}
-        </main>
-        <Footer />
+        <OfflineProvider>
+          <WebVitals />
+          <KeyboardShortcuts />
+          <SkipLink />
+          <Header />
+          <main id="main-content" className="flex-grow" tabIndex={-1}>
+            {children}
+          </main>
+          <Footer />
+        </OfflineProvider>
       </body>
     </html>
   );
