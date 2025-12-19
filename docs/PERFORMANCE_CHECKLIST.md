@@ -151,8 +151,13 @@
     - totalStudyMinutes: study_sessions 依存
     - recentSessions: study_sessions 依存
     - isStreakActive: last_study_date 依存
+  - ✅ React.memo と useCallback でリストアイテム最適化
+    - flashcards page: CategoryCard をメモ化、getCategoryProgress をキャッシュ
+    - alphabet page: LetterButton, LetterDetailCard をメモ化
+    - tones page: ToneCard をメモ化
+    - quiz selection page: QuizModeCard をメモ化
   - ✅ 不要な再レンダリング防止
-  - 実績: ランタイムパフォーマンス向上、不要な再計算を防止
+  - 実績: ランタイムパフォーマンス向上、不要な再計算・再レンダリングを防止
 
 - [ ] **データ読み込み最適化**
   - 段階的読み込み (Pagination)
@@ -265,7 +270,10 @@ npm run lighthouse
 - PWA 対応 (Service Worker、オフラインキャッシング)
 - Lighthouse ツール
 - **Code Splitting (動的インポート)** - ToneDetailCard, QuizResults
-- **React パフォーマンス最適化** - progress page に useMemo 適用
+- **React パフォーマンス最適化**
+  - useMemo 適用 (progress page)
+  - **React.memo 適用** - CategoryCard, LetterButton, LetterDetailCard, ToneCard, QuizModeCard
+  - **useCallback 適用** - イベントハンドラー、計算関数のメモ化
 
 **一部実装/要対応 (⚠️):**
 - フォント最適化 (Interフォントコード準備済み、ネットワークアクセス必要)
@@ -273,8 +281,6 @@ npm run lighthouse
 
 **未実装 (❌):**
 - データ読み込み最適化 (プリフェッチ、ページネーション)
-- React.memo 適用 (リストアイテムコンポーネント等)
-- useCallback 適用 (イベントハンドラー等)
 - Web Workers
 - IndexedDB 最適化 (実アプリでの活用)
 
