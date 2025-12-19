@@ -24,6 +24,8 @@
     "@auth/drizzle-adapter": "^1.11.1",
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.89.0",
     "@use-gesture/react": "^10.3.1",
     "@vercel/postgres": "^0.10.0",
     "bcryptjs": "^3.0.3",

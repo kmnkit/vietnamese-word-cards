@@ -12,9 +12,9 @@
 
 | タスクID | タスク名 | 優先度 | 依存関係 | 担当 | メモ |
 |---------|---------|-------|---------|------|------|
-| SUPA-001 | Supabase プロジェクト作成とスキーマ実装 | 🔴高 | SPEC-001 | - | Phase 1: データベース、RLS、型定義 |
+| SUPA-002 | 認証機能実装 | 🔴高 | SUPA-001 | - | Phase 2: AuthProvider, OAuth, SignIn/SignUp UI |
 | CONTENT-001 | 音声ファイルの統合 | 🔴高 | なし | - | public/audio/ 未作成、優先度高 |
-| SUPA-002 | 認証機能実装 | 🔴高 | SUPA-001 | - | Phase 2: AuthProvider, OAuth |
+| SUPA-003 | データ同期実装 | 🔴高 | SUPA-002 | - | Phase 3: API、自動同期、移行ツール |
 | PERF-003 | CSS 最適化の有効化 | 🟡中 | critters導入 | - | next.config.mjs で現在コメントアウト |
 | PERF-004 | フォント最適化 | 🟡中 | なし | - | Interフォントの再有効化とサブセット化 |
 | PERF-005 | React.memo/useCallback 適用 | 🟡中 | なし | - | リストアイテム、イベントハンドラー |
@@ -32,6 +32,7 @@
 | PERF-001 | 動的インポート (Code Splitting) 実装 | 2025-12-19 | ToneDetailCard, QuizResults | /learn/tones: -10.2 kB (9.3%削減) |
 | PERF-002 | React コンポーネント最適化 (useMemo) | 2025-12-19 | progress page 最適化 | 5つの expensive calculations をメモ化 |
 | SPEC-001 | Supabase 仕様書作成 | 2025-12-19 | SUPABASE_SPECIFICATION.md | 認証・データ永続化の包括的仕様書 |
+| SUPA-001 | Supabase Phase 1 実装 | 2025-12-19 | マイグレーション、クライアント、型定義 | データベーススキーマとクライアント設定完了 |
 
 ### 過去の完了タスク (パフォーマンス最適化)
 
@@ -82,9 +83,9 @@
 
 ## 📊 進捗サマリー
 
-**全体進捗**: 約80% (完了 15 / 全体 20タスク)
+**全体進捗**: 約85% (完了 16 / 全体 21タスク)
 
-**今週のベロシティ**: 6タスク完了 (ノート管理2 + パフォーマンス3 + 仕様書1)
+**今週のベロシティ**: 7タスク完了 (ノート管理2 + パフォーマンス3 + Supabase2)
 
 **リスク**:
 - 🟡 音声ファイル未統合 - 学習機能の重要部分
