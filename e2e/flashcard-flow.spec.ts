@@ -51,7 +51,7 @@ test.describe('Flashcard Learning Flow', () => {
     await page.waitForLoadState('networkidle');
 
     // Find and click audio button
-    const audioButton = page.getByRole('button', { name: /音声を聞く/ });
+    const audioButton = page.getByRole('button', { name: /🔊 音声を聞く/ });
     await expect(audioButton).toBeVisible({ timeout: 10000 });
 
     // Click audio button (note: audio playback itself can't be verified in E2E)
@@ -112,7 +112,7 @@ test.describe('Flashcard Learning Flow', () => {
     await expect(page.getByText('ベトナム語').first()).toBeVisible({ timeout: 10000 });
 
     // Get initial progress text
-    const progressElement = page.locator('text=/\d+ \/ \d+/').first();
+    const progressElement = page.locator('text=/\\d+ \\/ \\d+/').first();
     await expect(progressElement).toBeVisible();
     const initialProgress = await progressElement.textContent();
 

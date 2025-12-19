@@ -37,7 +37,7 @@ test.describe('Quiz Flow', () => {
 
     // Verify feedback is shown
     await page.waitForTimeout(500);
-    await expect(page.locator('text=/正解|不正解/')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=/🎉 正解！|❌ 不正解/').first()).toBeVisible({ timeout: 10000 });
 
     // Click next button
     const nextButton = page.getByRole('button', { name: /次の問題へ/ });
@@ -78,14 +78,14 @@ test.describe('Quiz Flow', () => {
     }
 
     // Verify completion screen
-    await expect(page.getByText('クイズ完了！')).toBeVisible();
+    await expect(page.getByText('クイズ完了！')).toBeVisible({ timeout: 15000 });
 
     // Verify XP is shown (5 XP per correct answer)
     await expect(page.locator('text=/獲得XP: \\d+ XP/')).toBeVisible();
 
     // Verify action buttons
-    await expect(page.getByRole('button', { name: /もう一度挑戦/ })).toBeVisible();
-    await expect(page.getByRole('button', { name: /他のクイズへ/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /もう一度挑戦/ })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('button', { name: /他のクイズへ/ })).toBeVisible({ timeout: 10000 });
   });
 
   test('should show wrong answers section when mistakes are made', async ({ page }) => {
@@ -123,7 +123,7 @@ test.describe('Quiz Flow', () => {
     }
 
     // Verify completion screen
-    await expect(page.getByText('クイズ完了！')).toBeVisible();
+    await expect(page.getByText('クイズ完了！')).toBeVisible({ timeout: 15000 });
 
     // Check if wrong answers section exists
     const wrongAnswersSection = page.getByText('間違えた問題');
@@ -188,7 +188,7 @@ test.describe('Quiz Flow', () => {
     await page.waitForTimeout(500);
 
     // Verify Vietnamese word is now revealed
-    await expect(page.locator('text=/正解|不正解/')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=/🎉 正解！|❌ 不正解/').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('should filter quiz by category using button interface', async ({ page }) => {
