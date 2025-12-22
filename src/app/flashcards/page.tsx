@@ -34,6 +34,7 @@ const CategoryCard = memo<CategoryCardProps>(function CategoryCard({
       key={category.id}
       href={`/flashcards/${category.id}`}
       className="group"
+      prefetch={true}
     >
       <div
         className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all p-6 border-2 border-gray-100 hover:border-primary-400 hover:scale-105 cursor-pointer h-full"

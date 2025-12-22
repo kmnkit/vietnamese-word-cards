@@ -50,11 +50,12 @@ export default function ListeningQuizPage() {
         let allWords: Word[] = [];
 
         if (categoryParam === 'all') {
+          // Load all categories in parallel for better performance
           const categories = ['greetings', 'numbers', 'daily', 'food', 'business'];
-          for (const cat of categories) {
-            const wordsModule = await import(`@/data/words/${cat}.json`);
-            allWords = [...allWords, ...wordsModule.default];
-          }
+          const wordModules = await Promise.all(
+            categories.map((cat) => import(`@/data/words/${cat}.json`))
+          );
+          allWords = wordModules.flatMap((module) => module.default);
         } else {
           const wordsModule = await import(`@/data/words/${categoryParam}.json`);
           allWords = wordsModule.default;

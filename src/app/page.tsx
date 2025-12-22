@@ -103,6 +103,7 @@ export default function Home() {
         <Link
           href="/learn/alphabet"
           className="group p-6 bg-white rounded-lg shadow hover:shadow-xl transition-all hover:-translate-y-1"
+          prefetch={true}
         >
           <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
             📝
@@ -118,6 +119,7 @@ export default function Home() {
         <Link
           href="/flashcards"
           className="group p-6 bg-white rounded-lg shadow hover:shadow-xl transition-all hover:-translate-y-1"
+          prefetch={true}
         >
           <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
             🎴
@@ -133,6 +135,7 @@ export default function Home() {
         <Link
           href="/quiz"
           className="group p-6 bg-white rounded-lg shadow hover:shadow-xl transition-all hover:-translate-y-1"
+          prefetch={true}
         >
           <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
             🎯
@@ -146,6 +149,7 @@ export default function Home() {
         <Link
           href="/progress"
           className="group p-6 bg-white rounded-lg shadow hover:shadow-xl transition-all hover:-translate-y-1"
+          prefetch={true}
         >
           <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
             📊
@@ -165,15 +169,15 @@ export default function Home() {
         <ol className="space-y-2 text-gray-700">
           <li className="flex items-start">
             <span className="font-semibold mr-2">1.</span>
-            まずは<Link href="/learn/alphabet" className="text-primary-600 hover:underline">アルファベット</Link>から始めましょう
+            まずは<Link href="/learn/alphabet" className="text-primary-600 hover:underline" prefetch={true}>アルファベット</Link>から始めましょう
           </li>
           <li className="flex items-start">
             <span className="font-semibold mr-2">2.</span>
-            <Link href="/flashcards" className="text-primary-600 hover:underline">単語カード</Link>で基本的な単語を覚えましょう
+            <Link href="/flashcards" className="text-primary-600 hover:underline" prefetch={true}>単語カード</Link>で基本的な単語を覚えましょう
           </li>
           <li className="flex items-start">
             <span className="font-semibold mr-2">3.</span>
-            <Link href="/quiz" className="text-primary-600 hover:underline">クイズ</Link>で理解度をチェックしましょう
+            <Link href="/quiz" className="text-primary-600 hover:underline" prefetch={true}>クイズ</Link>で理解度をチェックしましょう
           </li>
         </ol>
       </div>
